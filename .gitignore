@@ -1,3 +1,6 @@
 /.movement
 /.aptos
 /build/
+/node_scripts/.env
+/node_scripts/node_modules
+/node_scripts/package-lock.json

@@ -1,7 +1,9 @@
 [package]
-name = "ForgeForce"
+name = "forge_force_dev"
 version = "1.0.0"
 authors = ['yb']
+# for easier debug and development. Will be immuatble.
+upgrade_policy = "compatible"
 
 [addresses]
 
