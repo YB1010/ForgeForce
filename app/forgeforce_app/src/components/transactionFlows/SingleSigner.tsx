@@ -7,8 +7,10 @@ import { Card, CardHeader, CardTitle, CardContent } from "../ui/card";
 import { useToast } from "../ui/use-toast";
 import { TransactionHash } from "../TransactionHash";
 import ASCIIButton from "../ASCIIButton";
-import { useState } from 'react';
-
+import { SetStateAction, useState } from 'react';
+// @ts-ignore
+import Slider from 'rc-slider';
+import 'rc-slider/assets/index.css';
 
 export function SingleSigner() {
   const { toast } = useToast();
@@ -23,8 +25,10 @@ export function SingleSigner() {
   } = useWallet();
   let sendable = isSendableNetwork(connected, network?.name);
   const [input1, setInput1] = useState('');
-  const [input2, setInput2] = useState('');
-
+  const [input2, setInput2] = useState(0); 
+  const returnrate = (input2: number) => {
+    return 100 / (100 - input2) * 100
+  }
   const onSignMessageAndVerify = async () => {
     const payload = {
       message: "Hello from Aptos Wallet Adapter",
@@ -55,7 +59,7 @@ export function SingleSigner() {
     const transaction: InputTransactionData = {
       data: {
         function: "0x9b27f03f0b1258f467255e61dcbca5e8d2d0c41a66770b59c1f6cd8d5eea12c6::forge_force_dev::raffle_with_aggre",
-        functionArguments: [input1, input2], //
+        functionArguments: [parseFloat(input1)* 100000000, input2], //
       },
     };
     try {
@@ -77,12 +81,9 @@ export function SingleSigner() {
     }
   };
   const handleInputChange1 = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setInput1(event.target.value.replace(/\D/g, ''));
+    setInput1(event.target.value.replace(/[^\d\.]/g, ''));
   };
 
-  const handleInputChange2 = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setInput2(event.target.value.replace(/\D/g, ''));
-  };
 
 
   // const onSignAndSubmitBCSTransaction = async () => {
@@ -157,20 +158,32 @@ export function SingleSigner() {
         <CardTitle>Attack Monster Demo</CardTitle>
       </CardHeader>
       <CardContent className="flex flex-wrap gap-4 justify-center gap-4" >
-      <input
+      <div className="flex flex-col items-center">
+        <label htmlFor="input1" className="text-white">Using Energy:</label>
+        <input
           type="text"
+          id="input1"
           value={input1}
           onChange={handleInputChange1}
           placeholder="VALUE"
-          style={{ color: 'black' }}
+          style={{ color: 'black', width: '80px' }} // Set the width to 80 pixels
         />
-        <input
-          type="text"
-          value={input2}
-          onChange={handleInputChange2}
-          placeholder="AGGRE"
-          style={{ color: 'black' }}
-        />
+      </div>
+      <div className="flex flex-col items-center">
+        <label htmlFor="input2" className="text-white">Gainning EXP: {(returnrate(input2)- 100).toFixed(2)}%</label>
+        <label htmlFor="input2" className="text-white">Win Rate: {100 - input2}%</label>
+        <div style={{position: 'relative'}}>
+          <Slider
+            min={1}
+            max={99}
+            value={input2}
+            onChange={(value: SetStateAction<number>) => setInput2(value)}
+            style={{
+              width: 200, // Set the width to 200 pixels
+            }}
+          />
+        </div>
+      </div>
         <ASCIIButton onClick={() => onSignAndSubmitTransaction([])} disabled={!sendable} href={""} >
           Attack
         </ASCIIButton>

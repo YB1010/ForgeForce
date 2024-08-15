@@ -126,19 +126,12 @@ function ConnectWalletDialog({
   return (
     <DialogContent className="max-h-screen overflow-auto">
       <AboutAptosConnect renderEducationScreen={renderEducationScreen}>
-        {/* <DialogHeader>
+        <DialogHeader>
           <DialogTitle className="flex flex-col text-center leading-snug">
-            {hasAptosConnectWallets ? (
-              <>
-                <span>Log in or sign up</span>
-                <span>with Social + Aptos Connect</span>
-              </>
-            ) : (
-              "Connect Wallet"
-            )}
+            Connect a Wallet
           </DialogTitle>
         </DialogHeader>
-
+{/* 
         {hasAptosConnectWallets && (
           <div className="flex flex-col gap-2 pt-3">
             {aptosConnectWallets.map((wallet) => (
