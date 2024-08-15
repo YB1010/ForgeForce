@@ -21,3 +21,41 @@ Hence, in **Battle of Olympus Program**, we will mainly focus on building the fu
 - Designing the core card utilities, carefully balanced with the overall game structure.
 - Implementing the basic functions of the game, such as basic attack actions and basic monster generation events.
 - Implementing a basic frontend website to demonstrate the entire process.
+
+## Basic Demo
+
+Check out the demo site: [Forge Force Demo](https://forge-force.vercel.app/)
+
+### Summary
+
+Currently, the app only supports the Aptos testnet due to limitations with the randomness package on the Movement Suzuke testnet. The contract uses the native gas token for transactions (APT on Aptos Testnet and MOVE on Suzuke). In the future, I plan to introduce a new token for app transactions and a Card NFT.
+
+The dApp allows users to select two parameters:
+
+1.  **Energy** - the amount of tokens you wish to use. (Using Gas token Currently)
+
+2.  **Attack Aggressiveness** - a higher setting can yield greater returns but also increases the chance of failure.
+
+### Steps to Use the DApp:
+
+**Step 1**
+
+On the landing page, connect your wallet using the Aptos Testnet. **(Will be avaible on Movement Suzuke testnet once the randomness issue is resolved.)**
+
+**Step 2**
+
+Enter a token amount in the textbox. Be mindful of your balance, as the contract will reject transactions with insufficient funds.
+
+**Step 3**
+
+Adjust the desired aggressiveness rate. The dApp will provide detailed info based on your chosen rate.
+
+**Step 4**
+
+Click "Attack" and approve the transaction.
+
+**Step 5**
+
+-  If successful, you can view the transaction in the explorer by clicking the link in the bottom-right corner.
+
+-  If it fails, try lowering the token amount and attempting again.
