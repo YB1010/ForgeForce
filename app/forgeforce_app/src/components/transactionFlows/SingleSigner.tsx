@@ -173,15 +173,21 @@ export function SingleSigner() {
         <label htmlFor="input2" className="text-white">Gainning EXP: {(returnrate(input2)- 100).toFixed(2)}%</label>
         <label htmlFor="input2" className="text-white">Win Rate: {100 - input2}%</label>
         <div style={{position: 'relative'}}>
-          <Slider
-            min={1}
-            max={99}
-            value={input2}
-            onChange={(value: number) => setInput2(value)}
-            style={{
-              width: 200, // Set the width to 200 pixels
-            }}
-          />
+        <Slider
+              min={1}
+              max={99}
+              value={input2}
+              onChange={(value: number | number[]) => {
+                if (typeof value === 'number') {
+                  setInput2(value);
+                } else {
+                  setInput2(value[0]);
+                }
+              }}
+              style={{
+                width: 200,
+              }}
+            />
         </div>
       </div>
         <ASCIIButton onClick={() => onSignAndSubmitTransaction([])} disabled={!sendable} href={""} >
