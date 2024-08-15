@@ -100,7 +100,7 @@ export function WalletSelector(walletSortingOptions: WalletSortingOptions) {
   ) : (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
-      <ASCIIButton  href="/" className="w-full sm:w-auto" >ascii Connect a Wallet</ASCIIButton>
+      <ASCIIButton  href="/" className="w-full sm:w-auto" >Connect a Wallet</ASCIIButton>
 
       </DialogTrigger>
       <ConnectWalletDialog close={closeDialog} {...walletSortingOptions} />
@@ -126,7 +126,7 @@ function ConnectWalletDialog({
   return (
     <DialogContent className="max-h-screen overflow-auto">
       <AboutAptosConnect renderEducationScreen={renderEducationScreen}>
-        <DialogHeader>
+        {/* <DialogHeader>
           <DialogTitle className="flex flex-col text-center leading-snug">
             {hasAptosConnectWallets ? (
               <>
@@ -168,7 +168,7 @@ function ConnectWalletDialog({
               <div className="h-px w-full bg-secondary" />
             </div>
           </div>
-        )}
+        )} */}
 
         <div className="flex flex-col gap-3 pt-3">
           {availableWallets.map((wallet) => (
