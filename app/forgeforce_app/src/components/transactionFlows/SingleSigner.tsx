@@ -177,7 +177,7 @@ export function SingleSigner() {
             min={1}
             max={99}
             value={input2}
-            onChange={(value: SetStateAction<number>) => setInput2(value)}
+            onChange={(value: number) => setInput2(value)}
             style={{
               width: 200, // Set the width to 200 pixels
             }}
