@@ -1,0 +1,15 @@
+/* pixelLogoAnimation.css */
+@keyframes transformToMonster {
+    0% {
+      /* initial state: logo */
+      transform: scale(1);
+    }
+    100% {
+      /* final state: monster */
+      transform: scale(1.2) rotate(10deg);
+    }
+  }
+  
+  .transform-to-monster {
+    animation: transformToMonster 2s ease-in-out;
+  }

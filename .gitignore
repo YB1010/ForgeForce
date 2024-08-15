@@ -4,3 +4,9 @@
 /node_scripts/.env
 /node_scripts/node_modules
 /node_scripts/package-lock.json
+/app/forgeforce_app/node_modules
+/app/forgeforce_app/.next
+/app/forgeforce_app/.env
+/app/forgeforce_app/.gitignore
+/app/forgeforce_app/build
+/app/forgeforce_app/.DS_Store

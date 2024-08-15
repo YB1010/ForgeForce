@@ -4,8 +4,8 @@ const dotenv = require("dotenv");
 
 dotenv.config();
 
-const PRIVATE_KEY = process.env.PRIVATE_KEY;
-
+const PRIVATE_KEY = process.env.my_PRIVATE_KEY;
+console.log(PRIVATE_KEY);
 const MODULE_ADDRESS = process.env.MODULE_ADDRESS;
 
 
@@ -38,7 +38,7 @@ async function main() {
   }
 
   // Load the account from the private key
-  const privateKey = new Ed25519PrivateKey("");
+  const privateKey = new Ed25519PrivateKey(PRIVATE_KEY);
 
   const account = Account.fromPrivateKey({ privateKey }); //the constant variable name must be privateKey? Otherwise, it will be error.
 
