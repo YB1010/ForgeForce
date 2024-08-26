@@ -10,3 +10,4 @@
 /app/forgeforce_app/.gitignore
 /app/forgeforce_app/build
 /app/forgeforce_app/.DS_Store
+/app/forgeforce_app/move_oly.code-workspace

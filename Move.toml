@@ -1,5 +1,5 @@
 [package]
-name = "forge_force_dev_v4"
+name = "forge_force_dev_v5"
 version = "1.0.0"
 authors = ['yb']
 # for easier debug and development. Will be immuatble.
@@ -10,7 +10,6 @@ upgrade_policy = "compatible"
 [dev-addresses]
 
 [dependencies]
-SupraVrf = { git = "https://github.com/Entropy-Foundation/vrf-interface", subdir = "aptos/testnet", rev = "ff49e3688411d2374f75994a8713f86a5760868a"  }
 AptosFramework = { git = "https://github.com/aptos-labs/aptos-core.git", subdir = "aptos-move/framework/aptos-framework/", rev = "eb0144a39ada521d8dee01c9dbd601853d383fb3" }
 
 [dev-dependencies]
