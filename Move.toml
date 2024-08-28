@@ -1,6 +1,6 @@
 [package]
-name = "forge_force_dev_v5"
-version = "1.0.0"
+name = "forge_force_dev_v8"
+version = "1.1.0"
 authors = ['yb']
 # for easier debug and development. Will be immuatble.
 upgrade_policy = "compatible"
