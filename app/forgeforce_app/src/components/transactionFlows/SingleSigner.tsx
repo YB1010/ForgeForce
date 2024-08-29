@@ -75,7 +75,7 @@ export function SingleSigner() {
 
       // Call the server to settle the attack
       try {
-        const serverResponse = await axios.post('http://95.111.248.198:3001/settle-attack', {
+        const serverResponse = await axios.post('http://95.111.248.198:3355/settle-attack', {
           address: account.address,
           transactionHash: response.hash
         });
