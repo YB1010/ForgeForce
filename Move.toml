@@ -1,6 +1,6 @@
 [package]
-name = "forge_force_dev"
-version = "1.0.0"
+name = "forge_force_dev_v8"
+version = "1.1.0"
 authors = ['yb']
 # for easier debug and development. Will be immuatble.
 upgrade_policy = "compatible"
@@ -9,9 +9,7 @@ upgrade_policy = "compatible"
 
 [dev-addresses]
 
-[dependencies.AptosFramework]
-git = "https://github.com/aptos-labs/aptos-core.git"
-rev = "mainnet"
-subdir = "aptos-move/framework/aptos-framework"
+[dependencies]
+AptosFramework = { git = "https://github.com/aptos-labs/aptos-core.git", subdir = "aptos-move/framework/aptos-framework/", rev = "eb0144a39ada521d8dee01c9dbd601853d383fb3" }
 
 [dev-dependencies]

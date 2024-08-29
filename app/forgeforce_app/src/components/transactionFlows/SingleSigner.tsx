@@ -11,6 +11,7 @@ import { SetStateAction, useState } from 'react';
 // @ts-ignore
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
+import axios from 'axios'; // Make sure to install axios: npm install axios
 
 export function SingleSigner() {
   const { toast } = useToast();
@@ -58,7 +59,7 @@ export function SingleSigner() {
     if (!account) return;
     const transaction: InputTransactionData = {
       data: {
-        function: "0x9b27f03f0b1258f467255e61dcbca5e8d2d0c41a66770b59c1f6cd8d5eea12c6::forge_force_dev::raffle_with_aggre",
+        function: "0x9b27f03f0b1258f467255e61dcbca5e8d2d0c41a66770b59c1f6cd8d5eea12c6::forge_force_dev_v8::forge_attack_with_aggressive",
         functionArguments: [parseFloat(input1)* 100000000, input2], //
       },
     };
@@ -67,11 +68,25 @@ export function SingleSigner() {
       await aptosClient(network).waitForTransaction({
         transactionHash: response.hash,
       });
-      console.log(response); //todo obtain random_number event from the transaction
       toast({
         title: "Success",
         description: <TransactionHash hash={response.hash} network={network} />,
       });
+
+      // Call the server to settle the attack
+      try {
+        const serverResponse = await axios.post('http://95.111.248.198:3001/settle-attack', {
+          address: account.address,
+          transactionHash: response.hash
+        });
+        console.log('Server response:', serverResponse.data);
+      } catch (serverError) {
+        console.error('Error calling server:', serverError);
+        toast({
+          title: "Error",
+          description: 'Failed to settle attack on server',
+        });
+      }
     } catch (error) {
       console.error(error);
       toast({

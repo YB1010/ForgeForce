@@ -10,3 +10,7 @@
 /app/forgeforce_app/.gitignore
 /app/forgeforce_app/build
 /app/forgeforce_app/.DS_Store
+/app/forgeforce_app/move_oly.code-workspace
+/server/node_modules
+/server/.env
+/server/package-lock.json
