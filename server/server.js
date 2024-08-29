@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
-const { Account, Aptos, AptosConfig, Network, Ed25519PrivateKey } = require("@aptos-labs/ts-sdk");
 const cors = require('cors');
+const { Account, Aptos, AptosConfig, Network, Ed25519PrivateKey } = require("@aptos-labs/ts-sdk");
 const Queue = require('bull');
 const crypto = require('crypto');
 
@@ -9,7 +9,20 @@ const app = express();
 
 // CORS configuration
 const corsOptions = {
-  origin: process.env.FRONTEND_URL || 'https://forge-force.vercel.app/',
+  origin: function (origin, callback) {
+    const allowedOrigins = [
+      process.env.FRONTEND_URL,
+      'https://forge-force.vercel.app',
+      'http://localhost:3000',
+      'https://helloapple.xyz'
+    ].filter(Boolean);
+    
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   optionsSuccessStatus: 200
 };
 
@@ -20,8 +33,7 @@ const config = new AptosConfig({ network: Network.TESTNET });
 const aptos = new Aptos(config);
 
 // Use the private key from .env
-
-const privateKey = new Ed25519PrivateKey(process.env.APTOS_PRIVATE_KEY); //variable name must be privateKey
+const privateKey = new Ed25519PrivateKey(process.env.APTOS_PRIVATE_KEY);
 const account = Account.fromPrivateKey({ privateKey });
 
 // Create a new queue using REDIS_URL from .env
@@ -29,9 +41,15 @@ const settleAttackQueue = new Queue('settleAttack', process.env.REDIS_URL);
 
 // Function to generate a random number
 const generateRandomNumber = () => {
-  return crypto.randomInt(1, 99); // Generates a random integer between 1 and 99
+  return crypto.randomInt(1, 99);
 };
 
+// Root route
+app.get('/', (req, res) => {
+  res.send('Welcome to the Forge Force server!');
+});
+
+// Your existing routes
 app.post('/settle-attack', async (req, res) => {
   const { address, transactionHash } = req.body;
 
@@ -47,6 +65,11 @@ app.post('/settle-attack', async (req, res) => {
     console.error('Error queueing settle-attack request:', error);
     res.status(500).json({ success: false, error: error.message });
   }
+});
+
+const PORT = process.env.PORT || 3355;
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
 });
 
 // Process jobs from the queue
@@ -80,6 +103,3 @@ settleAttackQueue.process(async (job) => {
     throw error; // This will cause the job to be retried
   }
 });
-
-const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

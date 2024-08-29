@@ -13,6 +13,8 @@ import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
 import axios from 'axios'; // Make sure to install axios: npm install axios
 
+const API_URL = 'https://api.helloapple.xyz';
+
 export function SingleSigner() {
   const { toast } = useToast();
   const {
@@ -73,9 +75,9 @@ export function SingleSigner() {
         description: <TransactionHash hash={response.hash} network={network} />,
       });
 
-      // Call the server to settle the attack
+      // Update the API call to use the new endpoint
       try {
-        const serverResponse = await axios.post('http://95.111.248.198:3355/settle-attack', {
+        const serverResponse = await axios.post(`${API_URL}/settle-attack`, {
           address: account.address,
           transactionHash: response.hash
         });
