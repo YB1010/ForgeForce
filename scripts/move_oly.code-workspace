@@ -1,13 +1,7 @@
 {
 	"folders": [
 		{
-			"path": "../../aptos-gamble"
-		},
-		{
 			"path": ".."
-		},
-		{
-			"path": "../../rng_supra"
 		}
 	],
 	"settings": {}
