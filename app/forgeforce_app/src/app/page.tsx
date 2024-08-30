@@ -30,7 +30,7 @@ export default function Home() {
 
       <ASCIIBackground />
 
-      <main className="z-10 flex-1 flex-col items-center justify-center px-4 sm:px-20 text-center">
+      <main className="z-10 flex-1 flex flex-col items-center justify-center px-4 sm:px-20 text-center">
 
 
         <div className="mb-12 transform hover:scale-105 transition-transform duration-300">

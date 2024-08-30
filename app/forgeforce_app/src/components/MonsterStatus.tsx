@@ -23,7 +23,15 @@ const MonsterStatus: React.FC<MonsterStatusProps> = ({ monster: initialMonster, 
 
   const fetchMonster = useCallback(async () => {
     const aptos = aptosClient(network);
-
+    type MoveValue = {
+        key: string;
+        value: {
+          hp: string;
+          max_hp: string;
+          defence: string;
+        };
+      };
+      
     try {
       const monsterList = await aptos.view({
         payload: {
@@ -32,9 +40,10 @@ const MonsterStatus: React.FC<MonsterStatusProps> = ({ monster: initialMonster, 
           functionArguments: [],
         },
       });
+      const hasData = (obj: any): obj is { data: MoveValue[] } => 'data' in obj && Array.isArray(obj.data);
 
-      if (monsterList && Array.isArray(monsterList) && typeof monsterList[0] === 'object' && monsterList[0]?.data?.length > 0) {
-        const monsters = monsterList[0].data as MoveValue[]; // Cast to expected type
+      if (monsterList && Array.isArray(monsterList) && hasData(monsterList[0]) && monsterList[0].data.length > 0) {
+        const monsters = monsterList[0].data; // No need to cast if type guard is used
         let id = monsters.length; // Use monsters.length instead
         const latestMonster = monsters.reduce((latest, current) => 
           parseInt(current.key) > parseInt(latest.key) ? current : latest
