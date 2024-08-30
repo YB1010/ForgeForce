@@ -71,10 +71,13 @@ export function WalletSelector(walletSortingOptions: WalletSortingOptions) {
 
   return connected ? (
     <DropdownMenu>
+      
       <DropdownMenuTrigger asChild>
+      
         <Button>
           {account?.ansName || truncateAddress(account?.address) || "Unknown"}
         </Button>
+
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem onSelect={copyAddress} className="gap-2">

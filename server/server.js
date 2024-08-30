@@ -31,13 +31,13 @@ app.use(express.json());
 
 // Function to get Aptos configuration based on network parameter
 function getAptosConfig(network) {
-  if (network === 'custom') {
+  if (network.name === 'custom') {
     return new AptosConfig({ 
       network: Network.CUSTOM,
-      fullnode: 'https://aptos.testnet.suzuka.movementlabs.xyz/v1',
-      faucet: 'https://faucet.testnet.suzuka.movementlabs.xyz',
+      fullnode: network.url
     });
   } else {
+    // Default to TESTNET if network is not specified or recognized
     return new AptosConfig({ network: Network.TESTNET });
   }
 }
@@ -70,10 +70,8 @@ app.post('/settle-attack', async (req, res) => {
     return res.status(400).json({ success: false, error: 'Missing required parameters' });
   }
 
-  // Update Aptos configuration if a valid network is provided
-  if (network && ['testnet', 'movement'].includes(network.toLowerCase())) {
-    aptos = new Aptos(getAptosConfig(network.toLowerCase()));
-  }
+  // Update Aptos configuration based on the provided network
+  aptos = new Aptos(getAptosConfig(network));
 
   try {
     const randomNumber = generateRandomNumber();
@@ -95,9 +93,7 @@ settleAttackQueue.process(async (job) => {
   const { address, transactionHash, randomNumber, network } = job.data;
 
   // Update Aptos configuration based on the network from the job data
-  if (network && ['testnet', 'movement'].includes(network.toLowerCase())) {
-    aptos = new Aptos(getAptosConfig(network.toLowerCase()));
-  }
+  aptos = new Aptos(getAptosConfig(network));
 
   try {
     const transaction = await aptos.transaction.build.simple({

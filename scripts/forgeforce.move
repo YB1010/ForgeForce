@@ -252,7 +252,7 @@ module forge_force_dev_v8::forge_force_dev_v8 {
 
     fun generate_new_monster(module_data: &mut ModuleData, module_signer: &signer) {
         let balance = coin::balance<AptosCoin>(signer::address_of(module_signer));
-        let new_hp = (balance * 80) / 100; // 80% of current balance
+        let new_hp = (balance * 30) / 100; // 30% of current balance
         let new_defence = 10; // You can adjust this value as needed
         let monster_id = smart_table::length(&module_data.monster) + 1;
         smart_table::add(&mut module_data.monster, monster_id, Monster { hp: new_hp, max_hp: new_hp, defence: new_defence });

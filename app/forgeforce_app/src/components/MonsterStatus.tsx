@@ -23,6 +23,10 @@ const MonsterStatus: React.FC<MonsterStatusProps> = ({ monster: initialMonster, 
 
   const fetchMonster = useCallback(async () => {
     const aptos = aptosClient(network);
+    if (!aptos) {
+      console.error(network);
+      return;
+    }
     type MoveValue = {
         key: string;
         value: {

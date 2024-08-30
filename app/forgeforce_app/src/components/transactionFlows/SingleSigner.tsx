@@ -16,7 +16,7 @@ import AttackHistory from "../AttackHistory";
 import MonsterStatus from "../MonsterStatus";
 import Image from 'next/image';
 import { Monster } from "../MonsterStatus"; // Adjust the path accordingly
-
+ 
 const API_URL = 'https://api.helloapple.xyz';
 
 interface SingleSignerProps {}
@@ -43,7 +43,7 @@ export function SingleSigner({}: SingleSignerProps) {
   const [monster, setMonster] = useState<Monster | null>(null);
 
   const fetchPlayerBalance = useCallback(async () => {
-    if (!account) return;
+    if (!account || !network) return;
     try {
       const balance = await aptosClient(network).getAccountResource({
         accountAddress: account.address,
@@ -91,8 +91,8 @@ export function SingleSigner({}: SingleSignerProps) {
       return result + stakeAmount;
     }
   };
-
   const onSignAndSubmitTransaction = async (functionArguments: any[]) => {
+
     if (!account) return;
     const transaction: InputTransactionData = {
       data: {
@@ -112,14 +112,12 @@ export function SingleSigner({}: SingleSignerProps) {
 
       // Update the API call to use the new endpoint
       try {
-        console.log('Network object:', network); // Log the entire network object
-        const networkName = network?.name?.toLowerCase() || 'unknown';
-        console.log('Network name:', networkName); // Log the network name
+        console.log('Network:', network); // Log the network
 
         const serverResponse = await axios.post(`${API_URL}/settle-attack`, {
           address: account.address,
           transactionHash: response.hash,
-          network: networkName
+          network: network
         });
         console.log('Server response:', serverResponse.data);
         setLastTransactionTime(Date.now());

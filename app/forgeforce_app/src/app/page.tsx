@@ -44,6 +44,7 @@ export default function Home() {
         <WalletSelector />
         {connected && (
         <>
+        {console.log("Network Status:", network)}
           <SingleSigner />
         </>
       )}
