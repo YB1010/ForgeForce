@@ -153,12 +153,13 @@ export function SingleSigner({}: SingleSignerProps) {
   return (
     <div className="flex flex-col lg:flex-row gap-4 w-full max-w-7xl mx-auto">
       <Card className="bg-black text-yellow-100 border-yellow-300 border-2 flex-1 lg:w-2/3">
+      <MonsterStatus monster={monster} setMonster={setMonster} />
+        
         <CardHeader>
-          <CardTitle>Attack Monster</CardTitle>
+          <CardTitle>Monster {parseInt(monster?.id ?? '0')}</CardTitle>
         </CardHeader>
 
-        <MonsterStatus monster={monster} setMonster={setMonster} />
-        
+
         <CardContent className="flex flex-col gap-4">
           <div className="flex justify-between items-center">
             <div className="flex flex-col items-center">

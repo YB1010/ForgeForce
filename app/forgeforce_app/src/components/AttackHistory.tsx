@@ -41,7 +41,7 @@ const AttackHistory = ({ lastTransactionTime }: { lastTransactionTime: number | 
         innerArray.sort((a, b) => parseInt(b.raffle_id) - parseInt(a.raffle_id))
       );
       console.log("Sorted history:", sortedHistory);
-      setAttackHistory(sortedHistory);
+      setAttackHistory(sortedHistory.flat());
     } catch (error) {
       console.error("Error fetching attack history:", error);
     }
@@ -52,7 +52,7 @@ const AttackHistory = ({ lastTransactionTime }: { lastTransactionTime: number | 
       fetchAttackHistory();
     }
   }, [connected, account, fetchAttackHistory]);
-  
+
   useEffect(() => {
     if (connected && account && lastTransactionTime) {
       const timeoutId = setTimeout(() => {
@@ -82,24 +82,22 @@ const AttackHistory = ({ lastTransactionTime }: { lastTransactionTime: number | 
             <ul>
               {attackHistory.map((historyItem, index) => (
                 <React.Fragment key={index}>
-                  {historyItem.map((item) => (
-                    <li key={item.raffle_id} className="mb-4 border-b border-yellow-300 pb-2">
-                      <p>Raffle ID: {item.raffle_id}</p>
-                      <p>Monster ID: {item.monster_id}</p>
-                      <p>Staked Amount: {formatNumber(item.stake_amount)}</p>
-                      <p>Aggressive: {item.aggressive}%</p>
-                      {item.sampled ? (
-                        <>
-                          <p className={parseInt(item.final_damage) > 0 ? 'text-green-500' : 'text-red-500'}>
-                            {parseInt(item.final_damage) > 0 ? 'Success' : 'Failure'}
-                          </p>
-                          <p>Final Damage: {formatNumber(item.final_damage)}</p>
-                        </>
-                      ) : (
-                        <p className="text-yellow-500">Pending</p>
-                      )}
-                    </li>
-                  ))}
+                  <li key={historyItem.raffle_id} className="mb-4 border-b border-yellow-300 pb-2">
+                    <p>Raffle ID: {historyItem.raffle_id}</p>
+                    <p>Monster ID: {historyItem.monster_id}</p>
+                    <p>Staked Amount: {parseFloat(historyItem.stake_amount) / 100000000}</p>
+                    <p>Win Rate: {100 - parseFloat(historyItem.aggressive)}%</p>
+                    {historyItem.sampled ? (
+                      <>
+                        <p className={parseInt(historyItem.final_damage) > 0 ? 'text-green-500' : 'text-red-500'}>
+                          {parseInt(historyItem.final_damage) > 0 ? 'Success' : 'Failure'}
+                        </p>
+                        <p>Final Damage: {formatNumber(historyItem.final_damage)}</p>
+                      </>
+                    ) : (
+                      <p className="text-yellow-500">Pending</p>
+                    )}
+                  </li>
                 </React.Fragment>
               ))}
             </ul>

@@ -50,7 +50,7 @@ export default function Home() {
         </div>
       </main>
 
-      <footer className="z-10 w-full py-8 border-t border-yellow-900 text-center">
+      <footer className="z-10 w-full py-8 border-t border-yellow-300 text-center">
         <p className="text-sm">
         @ 2024 ForgeForce, All Rights Reserved
         </p>

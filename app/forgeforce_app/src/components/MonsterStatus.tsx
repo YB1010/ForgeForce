@@ -5,6 +5,7 @@ import { aptosClient } from "@/utils"; // Import the aptosClient function
 import Image from 'next/image';
 
 interface Monster {
+  id: string;
   hp: string;
   max_hp: string;
   defence: string;
@@ -34,10 +35,11 @@ const MonsterStatus: React.FC<MonsterStatusProps> = ({ monster: initialMonster, 
 
       if (monsterList && monsterList[0]?.data?.length > 0) {
         const monsters = monsterList[0].data;
+        let id = monsterList[0].data.length;
         const latestMonster = monsters.reduce((latest, current) => 
           parseInt(current.key) > parseInt(latest.key) ? current : latest
         );
-        const newMonster = latestMonster.value as Monster;
+        const newMonster = { ...latestMonster.value, id: latestMonster.key } as Monster;
         setMonsterState(newMonster);
         setMonster(newMonster); // Update the parent's monster state
         console.log('Updated monster:', newMonster);
