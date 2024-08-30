@@ -4,7 +4,7 @@ import { Aptos, AptosConfig, Network } from "@aptos-labs/ts-sdk";
 import { aptosClient } from "@/utils"; // Import the aptosClient function
 import Image from 'next/image';
 
-interface Monster {
+export interface Monster {
   id: string;
   hp: string;
   max_hp: string;

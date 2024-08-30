@@ -15,6 +15,7 @@ import axios from 'axios'; // Make sure to install axios: npm install axios
 import AttackHistory from "../AttackHistory";
 import MonsterStatus from "../MonsterStatus";
 import Image from 'next/image';
+import { Monster } from "../MonsterStatus"; // Adjust the path accordingly
 
 const API_URL = 'https://api.helloapple.xyz';
 
