@@ -33,9 +33,9 @@ const MonsterStatus: React.FC<MonsterStatusProps> = ({ monster: initialMonster, 
         },
       });
 
-      if (monsterList && monsterList[0]?.data?.length > 0) {
-        const monsters = monsterList[0].data;
-        let id = monsterList[0].data.length;
+      if (monsterList && Array.isArray(monsterList) && typeof monsterList[0] === 'object' && monsterList[0]?.data?.length > 0) {
+        const monsters = monsterList[0].data as MoveValue[]; // Cast to expected type
+        let id = monsters.length; // Use monsters.length instead
         const latestMonster = monsters.reduce((latest, current) => 
           parseInt(current.key) > parseInt(latest.key) ? current : latest
         );
