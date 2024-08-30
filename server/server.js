@@ -29,8 +29,21 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 
-const config = new AptosConfig({ network: Network.TESTNET });
-const aptos = new Aptos(config);
+// Function to get Aptos configuration based on network parameter
+function getAptosConfig(network) {
+  if (network === 'custom') {
+    return new AptosConfig({ 
+      network: Network.CUSTOM,
+      fullnode: 'https://aptos.testnet.suzuka.movementlabs.xyz/v1',
+      faucet: 'https://faucet.testnet.suzuka.movementlabs.xyz',
+    });
+  } else {
+    return new AptosConfig({ network: Network.TESTNET });
+  }
+}
+
+// Initialize with default config (you can choose either TESTNET or Movement)
+let aptos = new Aptos(getAptosConfig('testnet'));
 
 // Use the private key from .env
 const privateKey = new Ed25519PrivateKey(process.env.APTOS_PRIVATE_KEY);
@@ -49,17 +62,22 @@ app.get('/', (req, res) => {
   res.send('Welcome to the Forge Force server!');
 });
 
-// Your existing routes
+// Update the /settle-attack route to accept a network parameter
 app.post('/settle-attack', async (req, res) => {
-  const { address, transactionHash } = req.body;
+  const { address, transactionHash, network } = req.body;
 
   if (!address || !transactionHash) {
     return res.status(400).json({ success: false, error: 'Missing required parameters' });
   }
 
+  // Update Aptos configuration if a valid network is provided
+  if (network && ['testnet', 'movement'].includes(network.toLowerCase())) {
+    aptos = new Aptos(getAptosConfig(network.toLowerCase()));
+  }
+
   try {
     const randomNumber = generateRandomNumber();
-    await settleAttackQueue.add({ address, transactionHash, randomNumber });
+    await settleAttackQueue.add({ address, transactionHash, randomNumber, network });
     res.json({ success: true, message: 'Request queued for processing' });
   } catch (error) {
     console.error('Error queueing settle-attack request:', error);
@@ -74,13 +92,18 @@ app.listen(PORT, () => {
 
 // Process jobs from the queue
 settleAttackQueue.process(async (job) => {
-  const { address, transactionHash, randomNumber } = job.data;
+  const { address, transactionHash, randomNumber, network } = job.data;
+
+  // Update Aptos configuration based on the network from the job data
+  if (network && ['testnet', 'movement'].includes(network.toLowerCase())) {
+    aptos = new Aptos(getAptosConfig(network.toLowerCase()));
+  }
 
   try {
     const transaction = await aptos.transaction.build.simple({
       sender: account.accountAddress,
       data: {
-        function: "0x9b27f03f0b1258f467255e61dcbca5e8d2d0c41a66770b59c1f6cd8d5eea12c6::forge_force_dev::settle_attack",
+        function: "0x9b27f03f0b1258f467255e61dcbca5e8d2d0c41a66770b59c1f6cd8d5eea12c6::forge_force_dev_v8::settle_attack",
         functionArguments: [address, randomNumber.toString()],
         typeArguments: [],
       },

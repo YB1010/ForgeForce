@@ -1,15 +1,9 @@
 module forge_force_dev_v8::forge_force_dev_v8 {
     use std::signer;
-    use std::vector;
-    use std::string;
-    use std::debug;
-    use std::option::{Self, Option};
+    use std::vector;  
     use aptos_framework::coin;
     use aptos_framework::aptos_coin::AptosCoin;
-    use aptos_framework::account;
-    use aptos_std::table::{Self, Table};
-    use aptos_framework::timestamp;
-    use aptos_framework::block;
+    use aptos_framework::account;   
     use aptos_framework::event;
     use aptos_framework::create_signer::create_signer;
     use aptos_std::smart_table::{Self, SmartTable};
@@ -136,12 +130,22 @@ module forge_force_dev_v8::forge_force_dev_v8 {
         assert!(signer::address_of(admin) == @forge_force_dev_v8, E_UNAUTHORIZED);
         let module_data = borrow_global_mut<ModuleData>(@forge_force_dev_v8);
         let module_signer = account::create_signer_with_capability(&module_data.signer_cap);
+        
+        let (monster_killed, return_amount) = process_attack(module_data, &module_signer, player, server_random);
+        
+        if (return_amount > 0) {
+            coin::transfer<AptosCoin>(&module_signer, player, return_amount);
+        };
+        if (monster_killed) {
+            generate_new_monster(module_data, &module_signer);
+        };
+
+    }
+
+    fun process_attack(module_data: &mut ModuleData, module_signer: &signer, player: address, server_random: u64): (bool, u64) {
         let player_raffle = &mut module_data.player_raffles;
-
         let attack_history = smart_table::borrow_mut(player_raffle, player);
-
         let last_index = smart_vector::length(&attack_history.attack_history) - 1;
-
         let last_raffle = smart_vector::borrow_mut(&mut attack_history.attack_history, last_index);
 
         assert!(!last_raffle.sampled, E_RAFFLE_ALREADY_SAMPLED);
@@ -152,7 +156,6 @@ module forge_force_dev_v8::forge_force_dev_v8 {
 
         if (monster.hp == 0) {
             // If monster HP is 0, return all stake back to the player
-            coin::transfer<AptosCoin>(&module_signer, player, last_raffle.stake_amount);
             last_raffle.effective_amount = 0;
             last_raffle.final_damage = 0;
             last_raffle.bonus = 0;
@@ -164,7 +167,7 @@ module forge_force_dev_v8::forge_force_dev_v8 {
                 amount: last_raffle.stake_amount,
                 damage: 0
             });
-            return;
+            return (false, last_raffle.stake_amount)
         };
 
         if (last_raffle.random_number >= last_raffle.aggressive) {
@@ -200,8 +203,6 @@ module forge_force_dev_v8::forge_force_dev_v8 {
 
                 return_total = return_total + last_raffle.stake_amount;
 
-
-                coin::transfer<AptosCoin>(&module_signer, player, return_total);
                 event::emit_event(&mut module_data.attack_outcome_events, AttackOutcomeEvent {
                     raffle_id: last_raffle.raffle_id,
                     player,
@@ -209,6 +210,7 @@ module forge_force_dev_v8::forge_force_dev_v8 {
                     amount: return_total,
                     damage: damage_amount
                 });
+                return (monster.hp == 0, return_total)
             } else {
                 // damage amount is greater than monster hp
 
@@ -219,7 +221,6 @@ module forge_force_dev_v8::forge_force_dev_v8 {
 
 
                 let over_kill_total = over_kill_damage + last_raffle.stake_amount + bonus;  
-                coin::transfer<AptosCoin>(&module_signer, player, over_kill_total);
                 event::emit_event(&mut module_data.attack_outcome_events, AttackOutcomeEvent {
                     raffle_id: last_raffle.raffle_id,
                     player,
@@ -229,6 +230,8 @@ module forge_force_dev_v8::forge_force_dev_v8 {
                 });
 
                 monster.hp = 0;
+
+                return (true, over_kill_total)
             };
         } else {
             // Player loses, coins stay with the resource account
@@ -239,19 +242,23 @@ module forge_force_dev_v8::forge_force_dev_v8 {
                 raffle_id: last_raffle.raffle_id,
                 player,
                 outcome: false,
-                amount: last_raffle.stake_amount,
+                amount: 0,
                 damage: 0
             });
+            return (false, 0)
         };
+        return (false, 0)
     }
 
-    // fun generate_new_monster(module_signer: &signer) acquires ModuleData {
-    //     let module_data = borrow_global_mut<ModuleData>(@forge_force_dev_v8);
-    //     let balance = coin::balance<AptosCoin>(signer::address_of(module_signer));
-    //     let new_hp = (balance * 90) / 100; // 90% of current balance
-    //     module_data.monster = Monster { hp: new_hp, max_hp: new_hp };
-    // }
-
+    fun generate_new_monster(module_data: &mut ModuleData, module_signer: &signer) {
+        let balance = coin::balance<AptosCoin>(signer::address_of(module_signer));
+        let new_hp = (balance * 80) / 100; // 80% of current balance
+        let new_defence = 10; // You can adjust this value as needed
+        let monster_id = smart_table::length(&module_data.monster) + 1;
+        smart_table::add(&mut module_data.monster, monster_id, Monster { hp: new_hp, max_hp: new_hp, defence: new_defence });
+    }
+    
+    // admin function to generate a monster
     public entry fun generate_monster(admin: &signer, hp: u64 , defence: u64) acquires ModuleData {
         assert!(signer::address_of(admin) == @forge_force_dev_v8, E_UNAUTHORIZED);
         let module_data = borrow_global_mut<ModuleData>(@forge_force_dev_v8);
@@ -260,6 +267,7 @@ module forge_force_dev_v8::forge_force_dev_v8 {
         let monster_id = smart_table::length(&module_data.monster) + 1;
         smart_table::add(&mut module_data.monster, monster_id, Monster { hp, max_hp: hp, defence });
     }
+
 
     #[view]
     public fun get_monster_list(): SimpleMap<u64, Monster>  acquires ModuleData {
